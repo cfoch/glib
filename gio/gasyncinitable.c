@@ -363,6 +363,7 @@ g_async_initable_new_async (GType                object_type,
  * for any errors.
  *
  * Since: 2.22
+ * Deprecated: 2.52: Use g_object_new() followed by g_async_initable_new_async() instead.
  */
 void
 g_async_initable_newv_async (GType                object_type,
