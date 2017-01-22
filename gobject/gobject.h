@@ -425,6 +425,11 @@ gpointer    g_object_newv		      (GType           object_type,
 					       guint	       n_parameters,
 					       GParameter     *parameters);
 GLIB_AVAILABLE_IN_ALL
+gpointer    g_object_newv2                    (GType           object_type,
+                                               guint           n_properties,
+                                               const char     *names[],
+                                               const GValue    values[]);
+GLIB_AVAILABLE_IN_ALL
 GObject*    g_object_new_valist               (GType           object_type,
 					       const gchar    *first_property_name,
 					       va_list         var_args);
@@ -445,9 +450,19 @@ void	    g_object_disconnect               (gpointer	       object,
 					       const gchar    *signal_spec,
 					       ...) G_GNUC_NULL_TERMINATED;
 GLIB_AVAILABLE_IN_ALL
+void        g_object_setv                     (GObject        *object,
+                                               guint           n_properties,
+                                               const gchar    *names[],
+                                               const GValue    values[]);
+GLIB_AVAILABLE_IN_ALL
 void        g_object_set_valist               (GObject        *object,
 					       const gchar    *first_property_name,
 					       va_list         var_args);
+GLIB_AVAILABLE_IN_ALL
+void        g_object_getv                     (GObject        *object,
+                                               const guint     n_properties,
+                                               const gchar    *names[],
+                                               GValue          values[]);
 GLIB_AVAILABLE_IN_ALL
 void        g_object_get_valist               (GObject        *object,
 					       const gchar    *first_property_name,
