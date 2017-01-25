@@ -168,6 +168,7 @@ g_initable_new (GType          object_type,
  *      #GObject, or %NULL on error
  *
  * Since: 2.22
+ * Deprecated: 2.52: Use g_initable_newv2() instead.
  */
 gpointer
 g_initable_newv (GType          object_type,
@@ -181,6 +182,48 @@ g_initable_newv (GType          object_type,
   g_return_val_if_fail (G_TYPE_IS_INITABLE (object_type), NULL);
 
   obj = g_object_newv (object_type, n_parameters, parameters);
+
+  if (!g_initable_init (G_INITABLE (obj), cancellable, error))
+    {
+      g_object_unref (obj);
+      return NULL;
+    }
+
+  return (gpointer)obj;
+}
+
+/**
+ * g_initable_newv2:
+ * @object_type: a #GType supporting #GInitable.
+ * @n_properties: the number of properties
+ * @prop_names: (array length=n_properties): an array of strings
+ * @values: (array length=n_properties): an array of #GValue
+ * @cancellable: optional #GCancellable object, %NULL to ignore.
+ * @error: a #GError location to store the error occurring, or %NULL to
+ *     ignore.
+ *
+ * Helper function for constructing #GInitable object. This is
+ * similar to g_object_newv() but also initializes the object
+ * and returns %NULL, setting an error on failure.
+ *
+ * Returns: (type GObject.Object) (transfer full): a newly allocated
+ *      #GObject, or %NULL on error
+ *
+ * Since: 2.52: It will replace g_async_initable_newv_async.
+ */
+gpointer
+g_initable_newv2 (GType          object_type,
+		  guint          n_properties,
+		  const char    *prop_names[],
+		  const GValue   values[],
+		  GCancellable  *cancellable,
+		  GError       **error)
+{
+  GObject *obj;
+
+  g_return_val_if_fail (G_TYPE_IS_INITABLE (object_type), NULL);
+
+  obj = g_object_newv2 (object_type, n_properties, prop_names, values);
 
   if (!g_initable_init (G_INITABLE (obj), cancellable, error))
     {

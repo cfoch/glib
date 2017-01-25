@@ -193,9 +193,8 @@ typedef enum
 /* --- typedefs & structures --- */
 typedef struct _GParamSpec      GParamSpec;
 typedef struct _GParamSpecClass GParamSpecClass;
-#ifndef G_DISABLE_DEPRECATED
 typedef struct _GParameter	GParameter;
-#endif
+
 typedef struct _GParamSpecPool  GParamSpecPool;
 /**
  * GParamSpec: (ref-func g_param_spec_ref_sink) (unref-func g_param_spec_uref) (set-value-func g_value_set_param) (get-value-func g_value_get_param)
@@ -263,7 +262,6 @@ struct _GParamSpecClass
   gpointer	  dummy[4];
 };
 
-#ifndef G_DISABLE_DEPRECATED
 /**
  * GParameter:
  * @name: the parameter name
@@ -271,13 +269,14 @@ struct _GParamSpecClass
  * 
  * The GParameter struct is an auxiliary structure used
  * to hand parameter name/value pairs to g_object_newv().
+ *
+ * Deprecated: 2.52: This type will be removed.
  */
 struct _GParameter /* auxiliary structure for _setv() variants */
 {
   const gchar *name;
   GValue       value;
 };
-#endif
 
 /* --- prototypes --- */
 GLIB_AVAILABLE_IN_ALL

@@ -96,6 +96,15 @@ void     g_async_initable_new_async        (GType                 object_type,
 					    const gchar          *first_property_name,
 					    ...);
 GLIB_AVAILABLE_IN_ALL
+void     g_async_initable_newv_async2      (GType                 object_type,
+					    guint                 n_properties,
+					    const char           *prop_names[],
+					    const GValue          values[],
+					    int                   io_priority,
+					    GCancellable         *cancellable,
+					    GAsyncReadyCallback   callback,
+					    gpointer user_data);
+GLIB_DEPRECATED_IN_2_52_FOR(g_async_initable_newv_async)
 void     g_async_initable_newv_async       (GType                 object_type,
 					    guint                 n_parameters,
 					    GParameter           *parameters,

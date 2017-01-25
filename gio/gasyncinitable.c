@@ -363,6 +363,7 @@ g_async_initable_new_async (GType                object_type,
  * for any errors.
  *
  * Since: 2.22
+ * Deprecated: 2.52: Use g_async_initable_newv_async() instead.
  */
 void
 g_async_initable_newv_async (GType                object_type,
@@ -378,6 +379,49 @@ g_async_initable_newv_async (GType                object_type,
   g_return_if_fail (G_TYPE_IS_ASYNC_INITABLE (object_type));
 
   obj = g_object_newv (object_type, n_parameters, parameters);
+
+  g_async_initable_init_async (G_ASYNC_INITABLE (obj),
+			       io_priority, cancellable,
+			       callback, user_data);
+  g_object_unref (obj); /* Passed ownership to async call */
+}
+
+/**
+ * g_async_initable_newv_async2:
+ * @object_type: a #GType supporting #GAsyncInitable.
+ * @n_properties: the number of properties
+ * @prop_names: (array length=n_properties): an array of strings
+ * @values: (array length=n_properties): an array of #GValue
+ * @io_priority: the [I/O priority][io-priority] of the operation
+ * @cancellable: optional #GCancellable object, %NULL to ignore.
+ * @callback: a #GAsyncReadyCallback to call when the initialization is
+ *     finished
+ * @user_data: the data to pass to callback function
+ *
+ * Helper function for constructing #GAsyncInitable object. This is
+ * similar to g_object_newv() but also initializes the object asynchronously.
+ *
+ * When the initialization is finished, @callback will be called. You can
+ * then call g_async_initable_new_finish() to get the new object and check
+ * for any errors.
+ *
+ * Since: 2.52: It will replace g_async_initable_newv_async.
+ */
+void
+g_async_initable_newv_async2 (GType                object_type,
+			      guint                n_properties,
+			      const char          *prop_names[],
+			      const GValue         values[],
+			      int                  io_priority,
+			      GCancellable        *cancellable,
+			      GAsyncReadyCallback  callback,
+			      gpointer             user_data)
+{
+  GObject *obj;
+
+  g_return_if_fail (G_TYPE_IS_ASYNC_INITABLE (object_type));
+
+  obj = g_object_newv2 (object_type, n_properties, prop_names, values);
 
   g_async_initable_init_async (G_ASYNC_INITABLE (obj),
 			       io_priority, cancellable,

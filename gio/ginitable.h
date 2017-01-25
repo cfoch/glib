@@ -80,12 +80,20 @@ gpointer g_initable_new        (GType          object_type,
 				GError       **error,
 				const gchar   *first_property_name,
 				...);
-GLIB_AVAILABLE_IN_ALL
+
+GLIB_DEPRECATED_IN_2_52_FOR(g_initable_newv2)
 gpointer g_initable_newv       (GType          object_type,
 				guint          n_parameters,
 				GParameter    *parameters,
 				GCancellable  *cancellable,
 				GError       **error);
+GLIB_AVAILABLE_IN_ALL
+gpointer g_initable_newv2      (GType          object_type,
+				guint          n_properties,
+				const char    *prop_names[],
+				const GValue   values[],
+				GCancellable  *cancellable,
+				GError **error);
 GLIB_AVAILABLE_IN_ALL
 GObject* g_initable_new_valist (GType          object_type,
 				const gchar   *first_property_name,
