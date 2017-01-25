@@ -356,6 +356,51 @@ properties_construct (void)
   g_object_unref (obj);
 }
 
+static void
+properties_testv (void)
+{
+  TestObject *test_obj;
+  const char *prop_names[4] = { "foo", "bar", "baz", "quux" };
+
+  GValue values[4] = { G_VALUE_INIT };
+  GValue values2[4] = { G_VALUE_INIT };
+
+  g_value_init (&(values[0]), G_TYPE_INT);
+  g_value_set_int (&(values[0]), 100);
+
+  g_value_init (&(values[1]), G_TYPE_BOOLEAN);
+  g_value_set_boolean (&(values[1]), TRUE);
+
+  g_value_init (&(values[2]), G_TYPE_STRING);
+  g_value_set_string (&(values[2]), "pigs");
+
+  g_value_init (&(values[3]), G_TYPE_STRING);
+  g_value_set_string (&(values[3]), "fly");
+
+  /* Test newv2 && getv */
+  test_obj = g_object_newv2 (test_object_get_type (), 4, prop_names, values);
+
+  g_object_getv (G_OBJECT (test_obj), 4, prop_names, values2);
+  g_assert (g_value_get_int (&values2[0]) == 100);
+  g_assert (g_value_get_boolean (&values2[1]) == TRUE);
+  g_assert (g_strcmp0 (g_value_get_string (&values2[2]), "pigs") == 0);
+  g_assert (g_strcmp0 (g_value_get_string (&values2[3]), "fly") == 0);
+
+  /* Test newv2 && getv */
+  g_value_set_string (&(values[2]), "Elmo knows");
+  g_value_set_string (&(values[3]), "where you live");
+  g_object_setv (G_OBJECT (test_obj), 4, prop_names, values);
+
+  g_object_getv (G_OBJECT (test_obj), 4, prop_names, values2);
+
+  g_assert (g_value_get_int (&values2[0]) == 100);
+  g_assert (g_value_get_boolean (&values2[1]) == TRUE);
+  g_assert (g_strcmp0 (g_value_get_string (&values2[2]), "Elmo knows") == 0);
+  g_assert (g_strcmp0 (g_value_get_string (&values2[3]), "where you live") == 0);
+
+  g_object_unref (test_obj);
+}
+
 int
 main (int argc, char *argv[])
 {
@@ -367,6 +412,7 @@ main (int argc, char *argv[])
   g_test_add_func ("/properties/notify", properties_notify);
   g_test_add_func ("/properties/notify-queue", properties_notify_queue);
   g_test_add_func ("/properties/construct", properties_construct);
+  g_test_add_func ("/properties/testv", properties_testv);
 
   return g_test_run ();
 }
