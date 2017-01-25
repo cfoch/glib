@@ -421,14 +421,14 @@ gpointer    g_object_new                      (GType           object_type,
 					       const gchar    *first_property_name,
 					       ...);
 GLIB_AVAILABLE_IN_ALL
-gpointer    g_object_newv		      (GType           object_type,
-					       guint	       n_parameters,
-					       GParameter     *parameters);
-GLIB_AVAILABLE_IN_ALL
 gpointer    g_object_newv2                    (GType           object_type,
                                                guint           n_properties,
                                                const char     *names[],
                                                const GValue    values[]);
+GLIB_DEPRECATED_IN_2_52_FOR(g_object_newv2)
+gpointer    g_object_newv		      (GType           object_type,
+					       guint	       n_parameters,
+					       GParameter     *parameters);
 GLIB_AVAILABLE_IN_ALL
 GObject*    g_object_new_valist               (GType           object_type,
 					       const gchar    *first_property_name,

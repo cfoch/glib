@@ -1897,6 +1897,8 @@ g_object_new_is_valid_property (GType                  object_type,
  *
  * Returns: (type GObject.Object) (transfer full): a new instance of
  * @object_type
+ *
+ * Deprecated: 2.52: Use g_object_newv2() instead.
  */
 gpointer
 g_object_newv2 (GType          object_type,
