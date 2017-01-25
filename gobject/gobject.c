@@ -1620,7 +1620,7 @@ g_object_new (GType	   object_type,
   
   /* short circuit for calls supplying no properties */
   if (!first_property_name)
-    return g_object_newv (object_type, 0, NULL);
+    return g_object_newv2 (object_type, 0, NULL, NULL);
 
   va_start (var_args, first_property_name);
   object = g_object_new_valist (object_type, first_property_name, var_args);
@@ -1894,15 +1894,15 @@ g_object_new_is_valid_property (GType                  object_type,
  *
  * Construction parameters (see #G_PARAM_CONSTRUCT, #G_PARAM_CONSTRUCT_ONLY)
  * which are not explicitly specified are set to their default values.
- *g_object_newv
+ *
  * Returns: (type GObject.Object) (transfer full): a new instance of
  * @object_type
  */
 gpointer
-g_object_newv2 (GType         object_type,
-               guint          n_properties,
-               const char    *names[],
-               const GValue   values[])
+g_object_newv2 (GType          object_type,
+                guint          n_properties,
+                const char    *names[],
+                const GValue   values[])
 {
   GObjectClass *class, *unref_class = 0;
   GObject *object;
@@ -1951,7 +1951,7 @@ g_object_newv2 (GType         object_type,
 }
 
 /**
- * g_object_newv: (rename-to g_object_new)
+ * g_object_newv: (skip)
  * @object_type: the type id of the #GObject subtype to instantiate
  * @n_parameters: the length of the @parameters array
  * @parameters: (array length=n_parameters): an array of #GParameter
