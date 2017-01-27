@@ -1620,7 +1620,7 @@ g_object_new (GType	   object_type,
   
   /* short circuit for calls supplying no properties */
   if (!first_property_name)
-    return g_object_newv (object_type, 0, NULL);
+    return g_object_new_with_properties (object_type, 0, NULL, NULL);
 
   va_start (var_args, first_property_name);
   object = g_object_new_valist (object_type, first_property_name, var_args);
@@ -1972,6 +1972,9 @@ g_object_new_with_properties (GType          object_type,
  *
  * Returns: (type GObject.Object) (transfer full): a new instance of
  * @object_type
+ *
+ * Deprecated: 2.52: Use g_object_new_with_properties() instead, because #GParameter is now
+ * deprecated. See #GParameter for more information.
  */
 gpointer
 g_object_newv (GType       object_type,
