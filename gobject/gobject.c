@@ -2192,6 +2192,68 @@ g_object_set_is_valid_property (GObject         *object,
 }
 
 /**
+ * g_object_setv: (skip)
+ * @object: a #GObject
+ * @n_properties: the number of properties
+ * @names: (array length=n_properties): the names of each property to be set
+ * @values: (array length=n_properties): the values of each property to be set
+ *
+ * Sets @n_properties properties for an @object.
+ * Properties to be set will be taken from @values. All properties must be
+ * valid. Warnings will be emitted and undefined behaviour may result if invalid
+ * properties are passed in.
+ *
+ * Since: 2.52
+ */
+void
+g_object_setv (GObject       *object,
+               guint          n_properties,
+               const gchar   *names[],
+               const GValue   values[])
+{
+  guint i;
+  GObjectNotifyQueue *nqueue;
+  GParamSpec *pspec;
+  GType obj_type;
+
+  g_return_if_fail (G_IS_OBJECT (object));
+
+  if (n_properties == 0)
+    return;
+
+  g_object_ref (object);
+  obj_type = G_OBJECT_TYPE (object);
+  nqueue = g_object_notify_queue_freeze (object, FALSE);
+  for (i = 0; i < n_properties; i++)
+    {
+      if (names[i] == NULL || !G_IS_VALUE (&values[i]))
+        {
+          g_warning ("names[%d] cannot be NULL", i);
+          break;
+        }
+      if (!G_IS_VALUE (&values[i]))
+        {
+          g_warning ("values[%d] should be a GValue", i);
+          break;
+        }
+
+      pspec = g_param_spec_pool_lookup (pspec_pool,
+				        names[i],
+				        obj_type,
+				        TRUE);
+
+      if (!g_object_set_is_valid_property (object, pspec, names[i]))
+        break;
+
+      consider_issuing_property_deprecation_warning (pspec);
+      object_set_property (object, pspec, &values[i], nqueue);
+    }
+
+  g_object_notify_queue_thaw (object, nqueue);
+  g_object_unref (object);
+}
+
+/**
  * g_object_set_valist: (skip)
  * @object: a #GObject
  * @first_property_name: name of the first property to set
@@ -2271,6 +2333,54 @@ g_object_get_is_valid_property (GObject          *object,
       return FALSE;
     }
   return TRUE;
+}
+
+/**
+ * g_object_getv:
+ * @object: a #GObject
+ * @n_properties: the number of properties
+ * @names: (array length=n_properties) (nullable): an array of property names
+ * @values: (array length=n_properties) (nullable): an array of values
+ *
+ * Gets @n_properties properties for an @object.
+ * Obtained properties will be set to @values. All properties must be valid.
+ * Warnings will be emitted and undefined behaviour may result if invalid
+ * properties are passed in.
+ *
+ * Since: 2.52
+ */
+void
+g_object_getv (GObject      *object,
+               guint         n_properties,
+               const gchar  *names[],
+               GValue        values[])
+{
+  guint i;
+  GParamSpec *pspec;
+  GType obj_type;
+
+  g_return_if_fail (G_IS_OBJECT (object));
+
+  if (n_properties == 0)
+    return;
+
+  g_object_ref (object);
+
+  obj_type = G_OBJECT_TYPE (object);
+  for (i = 0; i < n_properties; i++)
+    {
+      pspec = g_param_spec_pool_lookup (pspec_pool,
+				        names[i],
+				        obj_type,
+				        TRUE);
+      if (!g_object_get_is_valid_property (object, pspec, names[i]))
+        break;
+
+      memset (&values[i], 0, sizeof (GValue));
+      g_value_init (&values[i], pspec->value_type);
+      object_get_property (object, pspec, &values[i]);
+    }
+  g_object_unref (object);
 }
 
 /**
@@ -2424,28 +2534,7 @@ g_object_set_property (GObject	    *object,
 		       const gchar  *property_name,
 		       const GValue *value)
 {
-  GObjectNotifyQueue *nqueue;
-  GParamSpec *pspec;
-  
-  g_return_if_fail (G_IS_OBJECT (object));
-  g_return_if_fail (property_name != NULL);
-  g_return_if_fail (G_IS_VALUE (value));
-  
-  g_object_ref (object);
-  nqueue = g_object_notify_queue_freeze (object, FALSE);
-  
-  pspec = g_param_spec_pool_lookup (pspec_pool,
-				    property_name,
-				    G_OBJECT_TYPE (object),
-				    TRUE);
-  if (g_object_set_is_valid_property (object, pspec, property_name))
-    {
-      consider_issuing_property_deprecation_warning (pspec);
-      object_set_property (object, pspec, value, nqueue);
-    }
-
-  g_object_notify_queue_thaw (object, nqueue);
-  g_object_unref (object);
+  g_object_setv (object, 1, &property_name, value);
 }
 
 /**
