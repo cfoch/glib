@@ -267,6 +267,9 @@ struct _GParamSpecClass
  * 
  * The GParameter struct is an auxiliary structure used
  * to hand parameter name/value pairs to g_object_newv().
+ *
+ * Deprecated: 2.52: This type will be removed in a future version.
+ * Do not use it, because it is not introspectible.
  */
 struct _GParameter /* auxiliary structure for _setv() variants */
 {
