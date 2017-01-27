@@ -168,6 +168,8 @@ g_initable_new (GType          object_type,
  *      #GObject, or %NULL on error
  *
  * Since: 2.22
+ * Deprecated: 2.52: Use g_object_new_with_properties() followed by g_initable_init() instead,
+ * because #GParameter is now deprecated. See #GParameter for more information.
  */
 gpointer
 g_initable_newv (GType          object_type,
